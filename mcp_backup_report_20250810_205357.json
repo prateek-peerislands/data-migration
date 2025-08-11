@@ -1,0 +1,136 @@
+{
+  "backup_time": "2025-08-10T20:53:57.822843",
+  "duration_seconds": 0.0,
+  "total_tables": 15,
+  "successful_tables": 0,
+  "failed_tables": 0,
+  "total_records": 0,
+  "table_results": {
+    "country": {
+      "table_name": "country",
+      "total_records": 109,
+      "processed_records": 0,
+      "batches": 0,
+      "last_backup": "2025-08-10T20:53:57.821530",
+      "status": "partial"
+    },
+    "city": {
+      "table_name": "city",
+      "total_records": 600,
+      "processed_records": 0,
+      "batches": 0,
+      "last_backup": "2025-08-10T20:53:57.821610",
+      "status": "partial"
+    },
+    "address": {
+      "table_name": "address",
+      "total_records": 603,
+      "processed_records": 0,
+      "batches": 0,
+      "last_backup": "2025-08-10T20:53:57.821653",
+      "status": "partial"
+    },
+    "language": {
+      "table_name": "language",
+      "total_records": 6,
+      "processed_records": 0,
+      "batches": 0,
+      "last_backup": "2025-08-10T20:53:57.821971",
+      "status": "partial"
+    },
+    "category": {
+      "table_name": "category",
+      "total_records": 16,
+      "processed_records": 0,
+      "batches": 0,
+      "last_backup": "2025-08-10T20:53:57.822048",
+      "status": "partial"
+    },
+    "actor": {
+      "table_name": "actor",
+      "total_records": 200,
+      "processed_records": 0,
+      "batches": 0,
+      "last_backup": "2025-08-10T20:53:57.822084",
+      "status": "partial"
+    },
+    "film": {
+      "table_name": "film",
+      "total_records": 1000,
+      "processed_records": 0,
+      "batches": 0,
+      "last_backup": "2025-08-10T20:53:57.822125",
+      "status": "partial"
+    },
+    "film_actor": {
+      "table_name": "film_actor",
+      "total_records": 5462,
+      "processed_records": 0,
+      "batches": 0,
+      "last_backup": "2025-08-10T20:53:57.822160",
+      "status": "partial"
+    },
+    "film_category": {
+      "table_name": "film_category",
+      "total_records": 1000,
+      "processed_records": 0,
+      "batches": 0,
+      "last_backup": "2025-08-10T20:53:57.822483",
+      "status": "partial"
+    },
+    "store": {
+      "table_name": "store",
+      "total_records": 2,
+      "processed_records": 0,
+      "batches": 0,
+      "last_backup": "2025-08-10T20:53:57.822536",
+      "status": "partial"
+    },
+    "staff": {
+      "table_name": "staff",
+      "total_records": 2,
+      "processed_records": 0,
+      "batches": 0,
+      "last_backup": "2025-08-10T20:53:57.822572",
+      "status": "partial"
+    },
+    "customer": {
+      "table_name": "customer",
+      "total_records": 599,
+      "processed_records": 0,
+      "batches": 0,
+      "last_backup": "2025-08-10T20:53:57.822610",
+      "status": "partial"
+    },
+    "inventory": {
+      "table_name": "inventory",
+      "total_records": 4581,
+      "processed_records": 0,
+      "batches": 0,
+      "last_backup": "2025-08-10T20:53:57.822643",
+      "status": "partial"
+    },
+    "rental": {
+      "table_name": "rental",
+      "total_records": 16044,
+      "processed_records": 0,
+      "batches": 0,
+      "last_backup": "2025-08-10T20:53:57.822677",
+      "status": "partial"
+    },
+    "payment": {
+      "table_name": "payment",
+      "total_records": 14596,
+      "processed_records": 0,
+      "batches": 0,
+      "last_backup": "2025-08-10T20:53:57.822804",
+      "status": "partial"
+    }
+  },
+  "metadata": {
+    "last_backup": null,
+    "tables": {},
+    "total_records": 0,
+    "backup_version": "1.0"
+  }
+}
