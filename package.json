@@ -1,0 +1,30 @@
+{
+  "name": "mcp-bridge-service",
+  "version": "1.0.0",
+  "description": "MCP Bridge Service for PostgreSQL and MongoDB integration",
+  "main": "mcp-bridge.js",
+  "scripts": {
+    "start": "node mcp-bridge.js",
+    "dev": "nodemon mcp-bridge.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "mcp",
+    "postgresql",
+    "mongodb",
+    "bridge",
+    "api"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  }
+}

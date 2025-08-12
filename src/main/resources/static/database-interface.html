@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Database Management Interface - MCP Powered</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+
+        .card h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 10px;
+        }
+
+        .query-section {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        .query-section h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+            text-align: center;
+        }
+
+        .query-input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            font-size: 16px;
+            margin-bottom: 20px;
+            transition: border-color 0.3s ease;
+        }
+
+        .query-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .query-button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+            width: 100%;
+        }
+
+        .query-button:hover {
+            transform: translateY(-2px);
+        }
+
+        .query-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .examples {
+            margin-top: 20px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .examples h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        .example-query {
+            background: white;
+            padding: 10px 15px;
+            margin: 8px 0;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .example-query:hover {
+            background-color: #f0f0f0;
+        }
+
+        .results-section {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-top: 30px;
+        }
+
+        .results-section h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+        }
+
+        .result-content {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
+            white-space: pre-wrap;
+            max-height: 400px;
+            overflow-y: auto;
+            border: 1px solid #e1e5e9;
+        }
+
+        .status {
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .status.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .feature-item {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            border: 1px solid #e1e5e9;
+        }
+
+        .feature-item h4 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .feature-item p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .mcp-tool-info {
+            background-color: #e9ecef;
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-size: 0.9em;
+            color: #343a40;
+            border-left: 4px solid #007bff;
+        }
+
+        .data-section {
+            background-color: #f1f3f5;
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            font-size: 0.9em;
+            color: #495057;
+            border-left: 4px solid #28a745;
+        }
+
+        .table-list, .collection-list {
+            font-family: 'Courier New', monospace;
+            white-space: pre-wrap;
+            word-break: break-all;
+            background-color: #ffffff;
+            padding: 8px 12px;
+            border-radius: 4px;
+            border: 1px solid #dee2e6;
+        }
+
+        .data-structure {
+            font-family: 'Courier New', monospace;
+            white-space: pre-wrap;
+            word-break: break-all;
+            background-color: #ffffff;
+            padding: 8px 12px;
+            border-radius: 4px;
+            border: 1px solid #dee2e6;
+            font-size: 0.85em;
+        }
+
+        .data-section strong {
+            color: #212529;
+            font-weight: 600;
+        }
+
+        .data-section code {
+            background-color: #f8f9fa;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            color: #e83e8c;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 Database Management Interface</h1>
+            <p>Powered by MCP (Model Context Protocol) - Interact with PostgreSQL & MongoDB using natural language</p>
+        </div>
+
+        <div class="query-section">
+            <h2>💬 Ask Me Anything About Your Databases</h2>
+            <textarea 
+                class="query-input" 
+                id="queryInput" 
+                placeholder="Enter your database query here... (e.g., 'backup my database', 'what is the current state of postgres', 'show me all tables in mongo')"
+                rows="4"
+            ></textarea>
+            <button class="query-button" id="submitQuery">🚀 Execute Query</button>
+            
+            <div class="examples">
+                <h3>💡 Example Queries:</h3>
+                <div class="example-query" onclick="setQuery('backup my database')">
+                    💾 backup my database
+                </div>
+                <div class="example-query" onclick="setQuery('what is the current state of postgres')">
+                    📊 what is the current state of postgres
+                </div>
+                <div class="example-query" onclick="setQuery('show me all tables in postgres')">
+                    🗃️ show me all tables in postgres
+                </div>
+                <div class="example-query" onclick="setQuery('analyze the dvdrental database structure')">
+                    🔍 analyze the dvdrental database structure
+                </div>
+                <div class="example-query" onclick="setQuery('show me data from customer table')">
+                    📋 show me data from customer table
+                </div>
+                <div class="example-query" onclick="setQuery('what are the values present in language table')">
+                    🔤 what are the values present in language table
+                </div>
+                <div class="example-query" onclick="setQuery('show me rows in actor table')">
+                    🎭 show me rows in actor table
+                </div>
+                <div class="example-query" onclick="setQuery('what is the current state of mongo cluster')">
+                    🍃 what is the current state of mongo cluster
+                </div>
+                <div class="example-query" onclick="setQuery('show me all collections in mongo')">
+                    📚 show me all collections in mongo
+                </div>
+                <div class="example-query" onclick="setQuery('analyze the customer table structure')">
+                    🔬 analyze the customer table structure
+                </div>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="card">
+                <h2>🐘 PostgreSQL Database</h2>
+                <div class="feature-grid">
+                    <div class="feature-item">
+                        <h4>📊 Schema Analysis</h4>
+                        <p>Analyze table structures, relationships, and data patterns</p>
+                    </div>
+                    <div class="feature-item">
+                        <h4>🔍 Data Queries</h4>
+                        <p>Execute complex SQL queries and get insights</p>
+                    </div>
+                    <div class="feature-item">
+                        <h4>📋 Table Operations</h4>
+                        <p>Create, modify, and manage database tables</p>
+                    </div>
+                    <div class="feature-item">
+                        <h4>💾 Backup & Export</h4>
+                        <p>Backup specific tables or entire databases</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>🍃 MongoDB Cluster</h2>
+                <div class="feature-grid">
+                    <div class="feature-item">
+                        <h4>🗃️ Collection Management</h4>
+                        <p>Manage collections, indexes, and document structures</p>
+                    </div>
+                    <div class="feature-item">
+                        <h4>📈 Aggregation Pipeline</h4>
+                        <p>Run complex aggregation queries and analytics</p>
+                    </div>
+                    <div class="feature-item">
+                        <h4>🔐 Access Control</h4>
+                        <p>Manage users, roles, and cluster access</p>
+                    </div>
+                    <div class="feature-item">
+                        <h4>📊 Performance Monitoring</h4>
+                        <p>Monitor cluster health and performance metrics</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>Processing your query with MCP servers...</p>
+        </div>
+
+        <div class="results-section" id="resultsSection" style="display: none;">
+            <h2>📋 Query Results</h2>
+            <div id="status" class="status"></div>
+            <div class="result-content" id="resultContent"></div>
+        </div>
+    </div>
+
+    <script>
+        function setQuery(query) {
+            document.getElementById('queryInput').value = query;
+        }
+
+        document.getElementById('submitQuery').addEventListener('click', async function() {
+            const query = document.getElementById('queryInput').value.trim();
+            if (!query) {
+                alert('Please enter a query first!');
+                return;
+            }
+
+            const button = this;
+            const loading = document.getElementById('loading');
+            const resultsSection = document.getElementById('resultsSection');
+            const status = document.getElementById('status');
+            const resultContent = document.getElementById('resultContent');
+
+            // Show loading state
+            button.disabled = true;
+            button.textContent = '⏳ Processing...';
+            loading.style.display = 'block';
+            resultsSection.style.display = 'none';
+
+            try {
+                // Send query to backend API
+                const result = await sendQueryToAPI(query);
+                
+                // Show results
+                if (result.success) {
+                    status.className = 'status success';
+                    status.textContent = '✅ Query executed successfully!';
+                    resultContent.innerHTML = formatResult(result);
+                } else {
+                    status.className = 'status error';
+                    status.textContent = '❌ Query failed: ' + result.message;
+                    resultContent.textContent = 'Please check your query and try again.';
+                }
+                resultsSection.style.display = 'block';
+                
+            } catch (error) {
+                status.className = 'status error';
+                status.textContent = '❌ Error executing query: ' + error.message;
+                resultContent.textContent = 'Network error or server unavailable. Please try again.';
+                resultsSection.style.display = 'block';
+            } finally {
+                // Reset button state
+                button.disabled = false;
+                button.textContent = '🚀 Execute Query';
+                loading.style.display = 'none';
+            }
+        });
+
+        async function sendQueryToAPI(query) {
+            try {
+                const response = await fetch('/api/mcp/query', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ query: query })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const result = await response.json();
+                return result;
+            } catch (error) {
+                console.error('Error sending query to API:', error);
+                throw error;
+            }
+        }
+
+        function formatResult(result) {
+            let formatted = `🤖 Query Processed Successfully\n\n`;
+            formatted += `📝 Your Query: "${result.query}"\n\n`;
+            formatted += `✅ MCP Server Response:\n`;
+            formatted += `${result.message}\n\n`;
+            
+            if (result.data) {
+                formatted += `📊 Data:\n`;
+                if (typeof result.data === 'object') {
+                    // Check if this is a cross-database result
+                    if (result.data.postgresql && result.data.mongodb) {
+                        formatted += `🐘 PostgreSQL:\n`;
+                        formatted += formatDataSection(result.data.postgresql);
+                        formatted += `\n🍃 MongoDB:\n`;
+                        formatted += formatDataSection(result.data.mongodb);
+                    } else {
+                        formatted += formatDataSection(result.data);
+                    }
+                } else {
+                    formatted += result.data.toString();
+                }
+            }
+            
+            formatted += `\n\n⏰ Timestamp: ${new Date(result.timestamp).toLocaleString()}`;
+            return formatted;
+        }
+
+        function formatDataSection(data) {
+            if (!data) return 'No data available';
+            
+            let formattedHtml = '';
+            
+            // Handle MCP tool information
+            if (data.mcp_tool_used) {
+                formattedHtml += `<div class="mcp-tool-info">
+                    <strong>🔧 MCP Tool Used:</strong> ${data.mcp_tool_used}<br>
+                </div>`;
+            }
+            
+            // Handle different data types
+            if (Array.isArray(data.tables)) {
+                formattedHtml += `<div class="data-section">
+                    <strong>📋 Tables (${data.total_tables || data.tables.length}):</strong><br>
+                    <div class="table-list">${data.tables.join(', ')}</div>
+                </div>`;
+            }
+            
+            if (Array.isArray(data.collections)) {
+                formattedHtml += `<div class="data-section">
+                    <strong>📁 Collections (${data.total_collections || data.collections.length}):</strong><br>
+                    <div class="collection-list">${data.collections.length > 0 ? data.collections.join(', ') : 'No collections found'}</div>
+                </div>`;
+            }
+            
+            if (data.database_name) {
+                formattedHtml += `<div class="data-section">
+                    <strong>🗄️ Database:</strong> ${data.database_name}<br>
+                </div>`;
+            }
+            
+            if (data.status) {
+                formattedHtml += `<div class="data-section">
+                    <strong>📊 Status:</strong> ${data.status}<br>
+                </div>`;
+            }
+            
+            if (data.note) {
+                formattedHtml += `<div class="data-section">
+                    <strong>💡 Note:</strong> ${data.note}<br>
+                </div>`;
+            }
+            
+            if (data.query_executed) {
+                formattedHtml += `<div class="data-section">
+                    <strong>🔍 Query Executed:</strong> <code>${data.query_executed}</code><br>
+                </div>`;
+            }
+            
+            if (data.sample_data_structure) {
+                formattedHtml += `<div class="data-section">
+                    <strong>📋 Sample Data Structure:</strong><br>
+                    <div class="data-structure">`;
+                for (const [key, value] of Object.entries(data.sample_data_structure)) {
+                    formattedHtml += `${key}: ${value}<br>`;
+                }
+                formattedHtml += `</div></div>`;
+            }
+            
+            if (data.export_format) {
+                formattedHtml += `<div class="data-section">
+                    <strong>📤 Export Format:</strong> ${data.export_format}<br>
+                </div>`;
+            }
+            
+            // Handle any other data fields
+            for (const [key, value] of Object.entries(data)) {
+                if (!['mcp_tool_used', 'tables', 'collections', 'database_name', 'status', 'note', 'query_executed', 'sample_data_structure', 'export_format', 'total_tables', 'total_collections'].includes(key)) {
+                    if (typeof value === 'object' && value !== null) {
+                        formattedHtml += `<div class="data-section">
+                            <strong>${key}:</strong> <pre>${JSON.stringify(value, null, 2)}</pre>
+                        </div>`;
+                    } else {
+                        formattedHtml += `<div class="data-section">
+                            <strong>${key}:</strong> ${value}<br>
+                        </div>`;
+                    }
+                }
+            }
+            
+            return formattedHtml || 'Data processed successfully';
+        }
+
+        // Add some interactive features
+        document.getElementById('queryInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                document.getElementById('submitQuery').click();
+            }
+        });
+
+        // Add some visual feedback
+        document.querySelectorAll('.example-query').forEach(item => {
+            item.addEventListener('click', function() {
+                this.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    this.style.transform = 'scale(1)';
+                }, 150);
+            });
+        });
+    </script>
+</body>
+</html>
