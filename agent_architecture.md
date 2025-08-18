@@ -148,6 +148,235 @@ sequenceDiagram
     MCPClient-->>MCPAgent: Update Health Status
 ```
 
+## 🔀 **Application Flow Diagram**
+
+```mermaid
+flowchart TD
+    START([Start Application]) --> CHECK_CONFIG{Configuration Exists?}
+    
+    CHECK_CONFIG -->|No| INTERACTIVE_SETUP[Interactive Setup]
+    CHECK_CONFIG -->|Yes| LOAD_CONFIG[Load Configuration]
+    
+    INTERACTIVE_SETUP --> VALIDATE_CONFIG{Valid Configuration?}
+    LOAD_CONFIG --> VALIDATE_CONFIG
+    
+    VALIDATE_CONFIG -->|No| SHOW_ERROR[Show Error & Exit]
+    VALIDATE_CONFIG -->|Yes| INIT_MCP[Initialize MCP Client]
+    
+    INIT_MCP --> CONNECT_DBS[Connect to Databases]
+    CONNECT_DBS --> HEALTH_CHECK[Perform Health Check]
+    
+    HEALTH_CHECK --> DB_HEALTHY{All DBs Healthy?}
+    DB_HEALTHY -->|No| SHOW_STATUS[Show Connection Status]
+    DB_HEALTHY -->|Yes| READY[Ready for Commands]
+    
+    SHOW_STATUS --> WAIT_RETRY[Wait for Retry]
+    WAIT_RETRY --> CONNECT_DBS
+    
+    READY --> PARSE_COMMAND{Parse User Command}
+    
+    PARSE_COMMAND --> QUERY_CMD[Query Command]
+    PARSE_COMMAND --> SCHEMA_CMD[Schema Command]
+    PARSE_COMMAND --> MIGRATE_CMD[Migrate Command]
+    PARSE_COMMAND --> STATUS_CMD[Status Command]
+    PARSE_COMMAND --> INTERACTIVE_CMD[Interactive Mode]
+    PARSE_COMMAND --> HELP_CMD[Help Command]
+    
+    %% Query Command Flow
+    QUERY_CMD --> SELECT_DB{Select Database}
+    SELECT_DB -->|PostgreSQL| PG_QUERY[Execute PostgreSQL Query]
+    SELECT_DB -->|MongoDB| MONGO_QUERY[Execute MongoDB Operation]
+    SELECT_DB -->|Cross-DB| CROSS_QUERY[Execute Cross-Database Query]
+    
+    PG_QUERY --> PG_RESULT[Process PostgreSQL Result]
+    MONGO_QUERY --> MONGO_RESULT[Process MongoDB Result]
+    CROSS_QUERY --> CROSS_RESULT[Process Cross-DB Result]
+    
+    PG_RESULT --> DISPLAY_RESULT[Display Results]
+    MONGO_RESULT --> DISPLAY_RESULT
+    CROSS_RESULT --> DISPLAY_RESULT
+    
+    %% Schema Command Flow
+    SCHEMA_CMD --> SCHEMA_OP{Schema Operation}
+    SCHEMA_OP -->|Analyze| ANALYZE_SCHEMA[Analyze PostgreSQL Schema]
+    SCHEMA_OP -->|Validate| VALIDATE_SCHEMA[Validate Schema]
+    SCHEMA_OP -->|Compare| COMPARE_SCHEMA[Compare Schemas]
+    SCHEMA_OP -->|Generate| GENERATE_SCHEMA[Generate MongoDB Schema]
+    
+    ANALYZE_SCHEMA --> MARKDOWN_GEN[Generate Markdown Documentation]
+    VALIDATE_SCHEMA --> VALIDATION_RESULT[Show Validation Results]
+    COMPARE_SCHEMA --> COMPARISON_RESULT[Show Comparison Results]
+    GENERATE_SCHEMA --> SCHEMA_RESULT[Show Generated Schema]
+    
+    MARKDOWN_GEN --> DISPLAY_RESULT
+    VALIDATION_RESULT --> DISPLAY_RESULT
+    COMPARISON_RESULT --> DISPLAY_RESULT
+    SCHEMA_RESULT --> DISPLAY_RESULT
+    
+    %% Migration Command Flow
+    MIGRATE_CMD --> MIGRATION_OP{Migration Operation}
+    MIGRATION_OP -->|Validate| VALIDATE_MIGRATION[Validate Migration]
+    MIGRATION_OP -->|Execute| EXECUTE_MIGRATION[Execute Migration]
+    
+    VALIDATE_MIGRATION --> MIGRATION_RESULT[Show Migration Results]
+    EXECUTE_MIGRATION --> MIGRATION_RESULT
+    
+    MIGRATION_RESULT --> DISPLAY_RESULT
+    
+    %% Status Command Flow
+    STATUS_CMD --> STATUS_OP{Status Operation}
+    STATUS_OP -->|Health| HEALTH_STATUS[Show Health Status]
+    STATUS_OP -->|Metrics| PERFORMANCE_METRICS[Show Performance Metrics]
+    STATUS_OP -->|General| GENERAL_STATUS[Show General Status]
+    
+    HEALTH_STATUS --> DISPLAY_RESULT
+    PERFORMANCE_METRICS --> DISPLAY_RESULT
+    GENERAL_STATUS --> DISPLAY_RESULT
+    
+    %% Interactive Mode Flow
+    INTERACTIVE_CMD --> NATURAL_LANG[Natural Language Processing]
+    NATURAL_LANG --> PARSE_NATURAL{Parse Natural Language}
+    
+    PARSE_NATURAL -->|PostgreSQL| PG_NATURAL[Handle PostgreSQL Request]
+    PARSE_NATURAL -->|MongoDB| MONGO_NATURAL[Handle MongoDB Request]
+    PARSE_NATURAL -->|Schema| SCHEMA_NATURAL[Handle Schema Request]
+    PARSE_NATURAL -->|Status| STATUS_NATURAL[Handle Status Request]
+    
+    PG_NATURAL --> PG_QUERY
+    MONGO_NATURAL --> MONGO_QUERY
+    SCHEMA_NATURAL --> SCHEMA_CMD
+    STATUS_NATURAL --> STATUS_CMD
+    
+    %% Help Command Flow
+    HELP_CMD --> SHOW_HELP[Display Help Information]
+    SHOW_HELP --> READY
+    
+    %% Display Results and Continue
+    DISPLAY_RESULT --> CONTINUE{Continue?}
+    CONTINUE -->|Yes| READY
+    CONTINUE -->|No| CLEANUP[Cleanup Resources]
+    
+    CLEANUP --> EXIT([Exit Application])
+    
+    %% Error Handling
+    SHOW_ERROR --> EXIT
+    
+    %% Styling
+    classDef startEnd fill:#e8f5e8,stroke:#2e7d32,stroke-width:3px
+    classDef process fill:#e3f2fd,stroke:#1565c0,stroke-width:2px
+    classDef decision fill:#fff3e0,stroke:#ef6c00,stroke-width:2px
+    classDef error fill:#ffebee,stroke:#c62828,stroke-width:2px
+    classDef result fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
+    
+    class START,EXIT startEnd
+    class INTERACTIVE_SETUP,LOAD_CONFIG,INIT_MCP,CONNECT_DBS,HEALTH_CHECK,READY,PG_QUERY,MONGO_QUERY,CROSS_QUERY,ANALYZE_SCHEMA,VALIDATE_SCHEMA,COMPARE_SCHEMA,GENERATE_SCHEMA,EXECUTE_MIGRATION,HEALTH_STATUS,PERFORMANCE_METRICS,GENERAL_STATUS,NATURAL_LANG,PG_NATURAL,MONGO_NATURAL,SCHEMA_NATURAL,STATUS_NATURAL,SHOW_HELP,CLEANUP process
+    class CHECK_CONFIG,VALIDATE_CONFIG,DB_HEALTHY,SELECT_DB,SCHEMA_OP,MIGRATION_OP,STATUS_OP,PARSE_NATURAL,CONTINUE decision
+    class SHOW_ERROR error
+    class PG_RESULT,MONGO_RESULT,CROSS_RESULT,MARKDOWN_GEN,VALIDATION_RESULT,COMPARISON_RESULT,SCHEMA_RESULT,MIGRATION_RESULT,DISPLAY_RESULT result
+```
+
+## 🔄 **Natural Language Processing Flow**
+
+```mermaid
+flowchart TD
+    USER_INPUT[User Natural Language Input] --> INPUT_PARSER[Input Parser]
+    
+    INPUT_PARSER --> PATTERN_MATCH{Pattern Matching}
+    
+    PATTERN_MATCH -->|PostgreSQL| PG_PATTERN[PostgreSQL Pattern Detected]
+    PATTERN_MATCH -->|MongoDB| MONGO_PATTERN[MongoDB Pattern Detected]
+    PATTERN_MATCH -->|Schema| SCHEMA_PATTERN[Schema Pattern Detected]
+    PATTERN_MATCH -->|Status| STATUS_PATTERN[Status Pattern Detected]
+    PATTERN_MATCH -->|Unknown| HELP_PATTERN[Show Help & Examples]
+    
+    %% PostgreSQL Pattern Processing
+    PG_PATTERN --> PG_OPERATION{Operation Type}
+    PG_OPERATION -->|UPDATE| PG_UPDATE[Parse UPDATE Operation]
+    PG_OPERATION -->|DELETE| PG_DELETE[Parse DELETE Operation]
+    PG_OPERATION -->|FETCH| PG_FETCH[Parse FETCH Operation]
+    PG_OPERATION -->|COUNT| PG_COUNT[Parse COUNT Operation]
+    
+    PG_UPDATE --> PG_UPDATE_SQL[Generate UPDATE SQL]
+    PG_DELETE --> PG_DELETE_SQL[Generate DELETE SQL]
+    PG_FETCH --> PG_FETCH_SQL[Generate SELECT SQL]
+    PG_COUNT --> PG_COUNT_SQL[Generate COUNT SQL]
+    
+    PG_UPDATE_SQL --> PG_EXECUTE[Execute PostgreSQL Query]
+    PG_DELETE_SQL --> PG_EXECUTE
+    PG_FETCH_SQL --> PG_EXECUTE
+    PG_COUNT_SQL --> PG_EXECUTE
+    
+    %% MongoDB Pattern Processing
+    MONGO_PATTERN --> MONGO_OPERATION{Operation Type}
+    MONGO_OPERATION -->|UPDATE| MONGO_UPDATE[Parse UPDATE Operation]
+    MONGO_OPERATION -->|DELETE| MONGO_DELETE[Parse DELETE Operation]
+    MONGO_OPERATION -->|FETCH| MONGO_FETCH[Parse FETCH Operation]
+    MONGO_OPERATION -->|COUNT| MONGO_COUNT[Parse COUNT Operation]
+    
+    MONGO_UPDATE --> MONGO_UPDATE_OP[Generate MongoDB Update]
+    MONGO_DELETE --> MONGO_DELETE_OP[Generate MongoDB Delete]
+    MONGO_FETCH --> MONGO_FETCH_OP[Generate MongoDB Find]
+    MONGO_COUNT --> MONGO_COUNT_OP[Generate MongoDB Count]
+    
+    MONGO_UPDATE_OP --> MONGO_EXECUTE[Execute MongoDB Operation]
+    MONGO_DELETE_OP --> MONGO_EXECUTE
+    MONGO_FETCH_OP --> MONGO_EXECUTE
+    MONGO_COUNT_OP --> MONGO_EXECUTE
+    
+    %% Schema Pattern Processing
+    SCHEMA_PATTERN --> SCHEMA_OPERATION{Schema Operation}
+    SCHEMA_OPERATION -->|Analyze| SCHEMA_ANALYZE[Trigger Schema Analysis]
+    SCHEMA_OPERATION -->|Compare| SCHEMA_COMPARE[Trigger Schema Comparison]
+    SCHEMA_OPERATION -->|Validate| SCHEMA_VALIDATE[Trigger Schema Validation]
+    
+    SCHEMA_ANALYZE --> SCHEMA_CMD
+    SCHEMA_COMPARE --> SCHEMA_CMD
+    SCHEMA_VALIDATE --> SCHEMA_CMD
+    
+    %% Status Pattern Processing
+    STATUS_PATTERN --> STATUS_OPERATION{Status Operation}
+    STATUS_OPERATION -->|Health| STATUS_HEALTH[Trigger Health Check]
+    STATUS_OPERATION -->|Metrics| STATUS_METRICS[Trigger Performance Metrics]
+    STATUS_OPERATION -->|General| STATUS_GENERAL[Show General Status]
+    
+    STATUS_HEALTH --> STATUS_CMD
+    STATUS_METRICS --> STATUS_CMD
+    STATUS_GENERAL --> STATUS_CMD
+    
+    %% Execution and Results
+    PG_EXECUTE --> PG_RESULT_PROCESS[Process PostgreSQL Results]
+    MONGO_EXECUTE --> MONGO_RESULT_PROCESS[Process MongoDB Results]
+    
+    PG_RESULT_PROCESS --> FORMAT_RESULT[Format Results]
+    MONGO_RESULT_PROCESS --> FORMAT_RESULT
+    
+    FORMAT_RESULT --> DISPLAY_USER[Display to User]
+    HELP_PATTERN --> DISPLAY_USER
+    
+    %% Error Handling
+    PG_EXECUTE --> PG_ERROR{Success?}
+    MONGO_EXECUTE --> MONGO_ERROR{Success?}
+    
+    PG_ERROR -->|No| PG_ERROR_HANDLE[Handle PostgreSQL Error]
+    MONGO_ERROR -->|No| MONGO_ERROR_HANDLE[Handle MongoDB Error]
+    
+    PG_ERROR_HANDLE --> DISPLAY_USER
+    MONGO_ERROR_HANDLE --> DISPLAY_USER
+    
+    %% Styling
+    classDef input fill:#e8f5e8,stroke:#2e7d32,stroke-width:2px
+    classDef process fill:#e3f2fd,stroke:#1565c0,stroke-width:2px
+    classDef decision fill:#fff3e0,stroke:#ef6c00,stroke-width:2px
+    classDef result fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
+    classDef error fill:#ffebee,stroke:#c62828,stroke-width:2px
+    
+    class USER_INPUT input
+    class INPUT_PARSER,PG_PATTERN,MONGO_PATTERN,SCHEMA_PATTERN,STATUS_PATTERN,PG_UPDATE,PG_DELETE,PG_FETCH,PG_COUNT,MONGO_UPDATE,MONGO_DELETE,MONGO_FETCH,MONGO_COUNT,SCHEMA_ANALYZE,SCHEMA_COMPARE,SCHEMA_VALIDATE,STATUS_HEALTH,STATUS_METRICS,STATUS_GENERAL,PG_EXECUTE,MONGO_EXECUTE,PG_RESULT_PROCESS,MONGO_RESULT_PROCESS,FORMAT_RESULT,DISPLAY_USER process
+    class PATTERN_MATCH,PG_OPERATION,MONGO_OPERATION,SCHEMA_OPERATION,STATUS_OPERATION,PG_ERROR,MONGO_ERROR decision
+    class PG_UPDATE_SQL,PG_DELETE_SQL,PG_FETCH_SQL,PG_COUNT_SQL,MONGO_UPDATE_OP,MONGO_DELETE_OP,MONGO_FETCH_OP,MONGO_COUNT_OP,SCHEMA_CMD,STATUS_CMD result
+    class PG_ERROR_HANDLE,MONGO_ERROR_HANDLE,HELP_PATTERN error
+```
+
 
 
 ## 🔧 **MCP Tools Architecture**
